@@ -8,7 +8,7 @@ $ npm install
 ### Run from command line 
 Read from CSV file and output salary to command line.
 ```sh
-$ node calcSalary MonthlyWageCalculationSystem_20170317_2.pdf
+$ node calcSalary HourList201403.csv
 # or
 $ npm run cmd
 ```
