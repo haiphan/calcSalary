@@ -1,0 +1,29 @@
+{
+  "name": "calculateSalary",
+  "description": "calculate salary",
+  "version": "0.0.1",
+  "description": "A program to calculate salary based on CSV text",
+  "author": "Hai Phan",
+  "license": "MIT",
+  "scripts": {
+    "cmd": "node calcSalary HourList201403.csv",
+    "start": "node index",
+    "lint": "eslint *.js __test__/*.js",
+    "test": "npm run lint && ./node_modules/jest/bin/jest.js --runInBand"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-core": "^6.25.0",
+    "babel-jest": "^20.0.3",
+    "babel-preset-env": "^1.6.0",
+    "eslint": "^4.2.0",
+    "eslint-config-airbnb-base": "^11.2.0",
+    "eslint-plugin-import": "^2.7.0",
+    "jest": "^20.0.4"
+  },
+  "dependencies": {
+    "bluebird": "^3.5.0",
+    "fast-csv": "^2.4.0",
+    "restify": "^5.0.0"
+  }
+}
