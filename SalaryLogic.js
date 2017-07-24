@@ -178,13 +178,31 @@ function hourSubtract(start, end) {
   return duration;
 }
 
+function roundFloat(inValue, inExp) {
+  let value = inValue;
+  let exp = inExp;
+  if (typeof exp === 'undefined' || exp === 0) {
+    return Math.round(value);
+  }
+
+  if (isNaN(value) || !(typeof exp === 'number' && exp % 1 === 0)) {
+    return NaN;
+  }
+
+  value = Math.round(`${value}e${exp}`);
+  exp *= -1;
+  value = Number(`${value}e${exp}`);
+  return value;
+}
+
 function calculateSalary(data) {
   const salaryData = {};
   Object.keys(data).map((p) => {
     let salary = getHourWage(data[p].hours) +
       getEveningWage(data[p].hours) +
       getOvertimeWage(data[p].byDate);
-    salary = Math.round((salary * 100)) / 100;
+
+    salary = roundFloat(salary, 2);
     salary = formatCurrency(salary);
     salaryData[p] = {
       name: data[p].name,

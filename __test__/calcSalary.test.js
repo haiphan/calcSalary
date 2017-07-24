@@ -14,7 +14,7 @@ describe('Read salary from CSV', () => {
     expect(result['1'].salary).toEqual('$7.50');
     expect(result['2'].salary).toEqual('$8.65');
     expect(result['3'].salary).toEqual('$50.88');
-    expect(result['4'].salary).toEqual('$60.98');
+    expect(result['4'].salary).toEqual('$68.48');
   });
 });
 
