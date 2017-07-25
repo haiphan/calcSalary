@@ -6,7 +6,7 @@ const testCSV = './__test__/testHours.csv';
 describe('Read salary from CSV', () => {
   test('Read CSV should succeed', async () => {
     const rows = await readDataFromCSV(testCSV);
-    expect(rows.length).toEqual(6);
+    expect(rows.length).toEqual(8);
   });
   test('Get salary should succeed', async () => {
     const result = await getSalaryFromCSV(testCSV);
@@ -15,6 +15,7 @@ describe('Read salary from CSV', () => {
     expect(result['2'].salary).toEqual('$8.65');
     expect(result['3'].salary).toEqual('$50.88');
     expect(result['4'].salary).toEqual('$68.48');
+    expect(result['5'].salary).toEqual('$144.45');
   });
 });
 
