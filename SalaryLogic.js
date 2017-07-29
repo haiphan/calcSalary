@@ -1,4 +1,3 @@
-const Promise = require('bluebird');
 const csv = require('fast-csv');
 const fs = require('fs');
 // Wage rate
