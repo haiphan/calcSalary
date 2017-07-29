@@ -57,21 +57,18 @@ function printToConsole(data) {
 function sortByPersonAndDate(data) {
   const salaryData = {};
   data.map(({ id, name, date, start, end }) => {
+    const hoursItem = {
+      date,
+      start: hourToMinute(start),
+      end: hourToMinute(end),
+    };
     if (salaryData[id]) {
-      salaryData[id].hours.push({
-        date,
-        start: hourToNumber(start),
-        end: hourToNumber(end),
-      });
+      salaryData[id].hours.push(hoursItem);
       return false;
     }
     salaryData[id] = {
       name,
-      hours: [{
-        date,
-        start: hourToNumber(start),
-        end: hourToNumber(end),
-      }],
+      hours: [hoursItem],
     };
     return false;
   });
@@ -102,6 +99,12 @@ function hourToNumber(text) {
   return hourFloat;
 }
 
+function hourToMinute(text) {
+  const [h, m] = text.split(':').map(x => Number(x));
+  const minutes = (h * 60) + m;
+  return minutes;
+}
+
 function getHourWage(data) {
   let wage = 0;
   data.map(({ start, end }) => {
@@ -109,6 +112,16 @@ function getHourWage(data) {
     return false;
   });
   wage *= HOUR_WAGE;
+  return wage;
+}
+
+function getHourWageM(data) {
+  let wage = 0;
+  data.map(({ start, end }) => {
+    wage += minuteSubtract(start, end);
+    return false;
+  });
+  wage *= (HOUR_WAGE / 60);
   return wage;
 }
 
@@ -126,6 +139,24 @@ function getEveningWage(data) {
     return false;
   });
   wage *= EVENING_WAGE;
+  return wage;
+}
+
+function getEveningWageM(data) {
+  let wage = 0;
+  const eveningTime = 18 * 60;
+  data.map(({ start, end }) => {
+    if (start >= eveningTime) {
+      wage += minuteSubtract(start, end);
+      return false;
+    }
+    if (end > eveningTime || end < start) {
+      wage += minuteSubtract(eveningTime, end);
+      return false;
+    }
+    return false;
+  });
+  wage *= (EVENING_WAGE / 60);
   return wage;
 }
 
@@ -170,10 +201,53 @@ function getOvertimeWage(data) {
   return wage;
 }
 
+function getOvertimeWageM(data) {
+  const normal = 8 * 60;
+  const twoHour = 2 * 60;
+  let overtime2h = 0;
+  let overtime4h = 0;
+  let overtime4p = 0;
+  Object.keys(data).map((d) => {
+    const dayMin = data[d].reduce((sum, item) => sum + minuteSubtract(item.start, item.end), 0);
+    let overtimeMin = dayMin - normal;
+    if (overtimeMin <= 0) {
+      return false;
+    }
+    // overtime less than 2h
+    if (overtimeMin <= twoHour) {
+      overtime2h += overtimeMin;
+      return false;
+    }
+    // overtime less than 4h
+    overtime2h += twoHour;
+    overtimeMin -= twoHour;
+    if (overtimeMin <= twoHour) {
+      overtime4h += overtimeMin;
+      return false;
+    }
+    // overtime more than 4h
+    overtime4h += twoHour;
+    overtimeMin -= twoHour;
+    overtime4p += overtimeMin;
+    return false;
+  });
+
+  const wage = ((overtime2h * OT2H) + (overtime4h * OT4H) + (overtime4p * OT4P)) / 60;
+  return wage;
+}
+
 function hourSubtract(start, end) {
   let duration = end - start;
   if (duration < 0) {
     duration += 24;
+  }
+  return duration;
+}
+
+function minuteSubtract(start, end) {
+  let duration = end - start;
+  if (duration < 0) {
+    duration += (24 * 60);
   }
   return duration;
 }
@@ -198,9 +272,9 @@ function roundFloat(inValue, inExp) {
 function calculateSalary(data) {
   const salaryData = {};
   Object.keys(data).map((p) => {
-    let salary = getHourWage(data[p].hours) +
-      getEveningWage(data[p].hours) +
-      getOvertimeWage(data[p].byDate);
+    let salary = getHourWageM(data[p].hours) +
+      getEveningWageM(data[p].hours) +
+      getOvertimeWageM(data[p].byDate);
 
     salary = roundFloat(salary, 2);
     salary = formatCurrency(salary);
