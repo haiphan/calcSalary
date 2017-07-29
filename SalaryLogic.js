@@ -9,7 +9,7 @@ const OT4H = HOUR_WAGE * 0.5;
 const OT4P = HOUR_WAGE;
 
 function readDataFromCSV(csvFile) {
-  return new Promise(((res, rej) => {
+  return new Promise((res, rej) => {
     const rows = [];
     const stream = fs.createReadStream(csvFile);
     const csvStream = csv()
@@ -17,13 +17,8 @@ function readDataFromCSV(csvFile) {
         if (!data[0] || data.length !== 5 || data[0] === 'Person Name') {
           return;
         }
-        rows.push({
-          name: data[0],
-          id: data[1],
-          date: data[2],
-          start: data[3],
-          end: data[4],
-        });
+        const [name, id, date, start, end] = data;
+        rows.push({ name, id, date, start, end });
       })
       .on('end', () => res(rows))
       .on('error', (err) => {
@@ -34,7 +29,7 @@ function readDataFromCSV(csvFile) {
       });
 
     stream.pipe(csvStream);
-  }));
+  });
 }
 
 function getSalaryFromCSV(csvFile) {
